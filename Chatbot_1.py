@@ -2,6 +2,9 @@
 #Written by: Azkiya Tahreem
 
 import tkinter as tk
+from flask import Flask, render_template, request, jsonify
+
+app = Flask(__name__)
 
 def chatbot_response(user_input):
     if "hello" in user_input.lower():
@@ -11,27 +14,15 @@ def chatbot_response(user_input):
     else:
         return "I'm sorry, I don't understand that."
 
-def send_message():
-    user_input = user_input_entry.get()
-    chatbox.insert(tk.END, "You: " + user_input + "\n")
-    chatbox.insert(tk.END, "Chatbot: " + chatbot_response(user_input) + "\n")
-    user_input_entry.delete(0, tk.END)
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-# Create the main window
-root = tk.Tk()
-root.title("Interactive Chatbot")
+@app.route("/get_response", methods=["POST"])
+def get_response():
+    user_input = request.form["user_input"]
+    response = chatbot_response(user_input)
+    return jsonify({"response": response})
 
-# Create the chatbox
-chatbox = tk.Text(root, height=20, width=50)
-chatbox.pack()
-
-# Create the user input entry
-user_input_entry = tk.Entry(root, width=40)
-user_input_entry.pack(side=tk.LEFT, padx=10)
-
-# Create the send button
-send_button = tk.Button(root, text="Send", command=send_message)
-send_button.pack(side=tk.LEFT)
-
-# Run the main loop
-root.mainloop()
+if __name__ == "__main__":
+    app.run(debug=True)
