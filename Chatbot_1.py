@@ -1,7 +1,6 @@
 
 #Written by: Azkiya Tahreem
 
-import tkinter as tk
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)

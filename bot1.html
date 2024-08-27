@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chatbox { width: 300px; height: 400px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; }
+        #userInput { width: 80%; }
+        #sendButton { width: 18%; }
+    </style>
+</head>
+<body>
+    <h1>Interactive Chatbot</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type your message here...">
+    <button id="sendButton">Send</button>
+
+    <script>
+        document.getElementById("sendButton").addEventListener("click", function() {
+            let userInput = document.getElementById("userInput").value;
+            document.getElementById("userInput").value = ""; // Clear input field
+            addMessage("You: " + userInput);
+
+            fetch("/get_response", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "user_input=" + encodeURIComponent(userInput)
+            })
+            .then(response => response.json())
+            .then(data => {
+                addMessage("Chatbot: " + data.response);
+            });
+        });
+
+        function addMessage(message) {
+            let chatbox = document.getElementById("chatbox");
+            let messageElement = document.createElement("p");
+            messageElement.textContent = message;
+            chatbox.appendChild(messageElement);
+            chatbox.scrollTop = chatbox.scrollHeight; // Scroll to the bottom
+        }
+    </script>
+</body>
+</html>
